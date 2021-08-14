@@ -121,6 +121,16 @@ public class Main : MonoBehaviour
 		/// </summary>
 		public static string HitLeftZ { get { return "hitLeftZ"; } }
 		/// <summary>
+		/// Name of the game object whose collider was hit by the right gaze ray.
+		/// (Only if a collision with a scene object was detected.)
+		/// </summary>
+		public static string ColliderRight { get { return "colliderRight"; } }
+		/// <summary>
+		/// Name of the game object whose collider was hit by the left gaze ray.
+		/// (Only if a collision with a scene object was detected.)
+		/// </summary>
+		public static string ColliderLeft { get { return "colliderLeft"; } }
+		/// <summary>
 		/// [X component of Unity world position in meters]
 		/// Focus point of the user as determined by the two gaze rays.
 		/// This point is at the smallest distance between the two gaze rays.
@@ -270,6 +280,9 @@ public class Main : MonoBehaviour
 		Logger.RegisterField(Field.HitLeftX);
 		Logger.RegisterField(Field.HitLeftY);
 		Logger.RegisterField(Field.HitLeftZ);
+		// For each hit point, log the name of the collider for a rough clue regarding the target.
+		Logger.RegisterField(Field.ColliderRight);
+		Logger.RegisterField(Field.ColliderLeft);
 		// The focus point and metadata will only be available while the user is actually there.
 		Logger.RegisterField(Field.FocusX);
 		Logger.RegisterField(Field.FocusY);
@@ -303,7 +316,14 @@ public class Main : MonoBehaviour
 			float collisionDistance = Mathf.Lerp(hitRight.distance, hitLeft.distance, 0.5f);
 			gazeIndicator.transform.position = Vector3.Lerp(hitRight.point, hitLeft.point, 0.5f);
 			gazeIndicator.transform.LookAt(Camera.main.transform);
-			gazeIndicator.GetComponentInChildren<TextMesh>().text = (focusDistance - collisionDistance).ToString("F2");
+			gazeIndicator.GetComponentsInChildren<TextMesh>()[0].text = (focusDistance - collisionDistance).ToString("F2");
+			string collider = "";
+			if (hitRight.collider == hitLeft.collider)
+			{
+				// Only display the collider's name if both gaze rays hit the same collider.
+				collider = hitRight.collider.name;
+			}
+			gazeIndicator.GetComponentsInChildren<TextMesh>()[1].text = collider;
 		}
 		else
 		{
@@ -319,10 +339,12 @@ public class Main : MonoBehaviour
 			if (right)
 			{
 				UpdateVector3(Field.GetBase(Field.HitRightX), hitRight.point);
+				Logger.UpdateField(Field.ColliderRight, hitRight.collider.name);
 			}
 			if (left)
 			{
 				UpdateVector3(Field.GetBase(Field.HitLeftX), hitLeft.point);
+				Logger.UpdateField(Field.ColliderLeft, hitLeft.collider.name);
 			}
 			// Only log the focus point and metadata if a user is actually wearing the headset.
 			if (eyeTracker.IsUserPresent())
