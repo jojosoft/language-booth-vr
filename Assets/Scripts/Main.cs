@@ -49,6 +49,24 @@ public class Main : MonoBehaviour
 		/// </summary>
 		public static string HeadZ { get { return "headZ"; } }
 		/// <summary>
+		/// [X component of normalized Unity vector in meters]
+		/// Vector indicating the up direction of the user's head.
+		/// It is already normalized to 1 m.
+		/// </summary>
+		public static string UpX { get { return "upX"; } }
+		/// <summary>
+		/// [Y component of normalized Unity vector in meters]
+		/// Vector indicating the up direction of the user's head.
+		/// It is already normalized to 1 m.
+		/// </summary>
+		public static string UpY { get { return "upY"; } }
+		/// <summary>
+		/// [Z component of normalized Unity vector in meters]
+		/// Vector indicating the up direction of the user's head.
+		/// It is already normalized to 1 m.
+		/// </summary>
+		public static string UpZ { get { return "upZ"; } }
+		/// <summary>
 		/// [X component of Unity world position in meters]
 		/// Position indicating the general view direction of the user.
 		/// Determined using a probe object 1 m in front of the main camera.
@@ -130,6 +148,8 @@ public class Main : MonoBehaviour
 	public PhoneBooth phoneBooth;
 	[Tooltip("A probe 1 m in front of the user, its world position will indicate the user's viewing direction.")]
 	public Transform viewProbe;
+	[Tooltip("A probe 1 m above the user, its world position will indicate their head's up vector.")]
+	public Transform upProbe;
 	[Tooltip("An object for debugging which shows gaze information.")]
 	public GameObject gazeIndicator;
 	[Tooltip("Sphere around the main camera which can hide the scene.")]
@@ -237,6 +257,9 @@ public class Main : MonoBehaviour
 		Logger.RegisterField(Field.HeadX, true);
 		Logger.RegisterField(Field.HeadY, true);
 		Logger.RegisterField(Field.HeadZ, true);
+		Logger.RegisterField(Field.UpX, true);
+		Logger.RegisterField(Field.UpY, true);
+		Logger.RegisterField(Field.UpZ, true);
 		Logger.RegisterField(Field.ViewX, true);
 		Logger.RegisterField(Field.ViewY, true);
 		Logger.RegisterField(Field.ViewZ, true);
@@ -266,6 +289,7 @@ public class Main : MonoBehaviour
 		Vector3 focusPoint = eyeTracker.GetFocusPoint();
 		Vector3 headset = Camera.main.transform.position;
 		Vector3 viewPoint = viewProbe.position;
+		Vector3 upVector = upProbe.position - headset;
 		// Perform two separate raycasts, just to be completely sure.
 		// The "combined" gaze ray provided by SRanipal is not fully reliable.
 		RaycastHit hitRight;
@@ -289,6 +313,7 @@ public class Main : MonoBehaviour
 		if (Logger.IsLogging())
 		{
 			UpdateVector3(Field.GetBase(Field.HeadX), headset);
+			UpdateVector3(Field.GetBase(Field.UpX), upVector);
 			UpdateVector3(Field.GetBase(Field.ViewX), viewPoint);
 			// Only log the hit points if the rays actually hit a scene object.
 			if (right)
