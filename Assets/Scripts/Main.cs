@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.IO;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
@@ -376,8 +377,18 @@ public class Main : MonoBehaviour
 		Logger.End();
 		if (!Debug.isDebugBuild && uploadURI.Length > 0)
 		{
-			// Upload asynchronously to avoid unpredictable delays!
-			Upload.Async(Logger.GetFilePath(), uploadURI);
+			string logfile = Logger.GetFilePath();
+			// Search for all output files with the current user id.
+			// (We also want to upload the verification data from the subfolder.)
+			string[] files = Directory.GetFiles(Logger.directory, "*.txt").Where(path => {
+				string fname = Path.GetFileName(path);
+				return fname.Split('-')[0] == logfile.Split('-')[0];
+			}).ToArray();
+			foreach (string file in files)
+			{
+				// Upload asynchronously to avoid unpredictable delays!
+				Upload.Async(Logger.GetFilePath(), uploadURI);
+			}
 		}
 		yield return phoneBooth.PlayClip(userIDSound, false);
 		Application.Quit();

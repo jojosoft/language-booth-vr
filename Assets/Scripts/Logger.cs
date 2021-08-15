@@ -129,11 +129,11 @@ public class Logger : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Returns the path to the current log file or the last log file if currently inactive.
+	/// Returns the full path to the current log file or the last log file if currently inactive.
 	/// </summary>
 	public string GetFilePath()
 	{
-		return Path.Combine(directory, filename);
+		return Path.Combine(Path.GetFullPath(directory), filename);
 	}
 
 	public void UpdateField(string name, string data)
