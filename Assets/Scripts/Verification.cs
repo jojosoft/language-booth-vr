@@ -40,11 +40,12 @@ public class Verification : MonoBehaviour
 		}
 		Logger.End();
 		// Move the file to the main output directory and rename it in one go.
-		string filePath = Logger.GetFilePath();
+		// Actually - don't. It will cause the main output file to get the next id.
+		/*string filePath = Logger.GetFilePath();
 		string fileName = Path.GetFileName(filePath);
 		string parentDir = Path.Combine(Directory.GetParent(filePath).FullName, "..");
 		Debug.Log(Path.Combine(parentDir, fileName.Split('-')[0] + "-EyeTrackingVerification.txt"));
-		File.Move(filePath, Path.Combine(parentDir, fileName.Split('-')[0] + "-EyeTrackingVerification.txt"));
+		File.Move(filePath, Path.Combine(parentDir, fileName.Split('-')[0] + "-EyeTrackingVerification.txt"));*/
 		// After the movement finished, tell the user to wink to proceed.
 		crosshair.gameObject.SetActive(false);
 		indicator.gameObject.SetActive(false);

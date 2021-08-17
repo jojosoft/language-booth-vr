@@ -382,9 +382,9 @@ public class Main : MonoBehaviour
 		if (!Debug.isDebugBuild && uploadURI.Length > 0)
 		{
 			string logfile = Logger.GetFilePath();
-			// Search for all output files with the current user id.
-			// (We also want to upload the verification data from the subfolder.)
-			string[] files = Directory.GetFiles(Logger.directory, "*.txt").Where(path => {
+			// Search for all output files starting with the current user id, followed by a dash.
+			// (We also want to upload the verification data from the subfolder, for example.)
+			string[] files = Directory.EnumerateFiles(Logger.directory, "*.txt", SearchOption.AllDirectories).Where(path => {
 				string fname = Path.GetFileName(path);
 				return fname.Split('-')[0] == logfile.Split('-')[0];
 			}).ToArray();
