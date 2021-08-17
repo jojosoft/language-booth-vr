@@ -48,6 +48,7 @@ public class Verification : MonoBehaviour
 		// After the movement finished, tell the user to wink to proceed.
 		crosshair.gameObject.SetActive(false);
 		indicator.gameObject.SetActive(false);
+		// Not rendering this text until now has implicitly prevented winks to be accepted by the main procedure!
 		this.transform.GetChild(0).GetComponent<MeshRenderer>().enabled = true;
 	}
 

@@ -232,10 +232,14 @@ public class Main : MonoBehaviour
 				float winkTime = 0.0f;
 				do
 				{
+					// Only allow the user to proceed if the "please proceed" text is actually rendered.
+					// (This text has to be the first when searching the children from top to bottom!)
+					// (Scripts on the into element can prevent early winks by disabling its renderer.)
+					bool ready = introParent.GetChild(i).gameObject.GetComponentInChildren<MeshRenderer>().enabled;
 					// Retrieve the current wink state and wink certainty:
 					winkState = eyeTracker.GetWinkState(out winkCertainty);
 					// Give feedback on the wink through text color.
-					if (winkCertainty >= 0.25f)
+					if (ready && winkCertainty >= 0.25f)
 					{
 						Color text;
 						if (winkState != EyeTracker.Wink.None)
