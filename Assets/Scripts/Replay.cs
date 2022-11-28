@@ -50,33 +50,40 @@ public class Replay : MonoBehaviour
 				{
 					yield return null;
 				}
-				// Head and view points are always there. (No NAs.)
-				// For the rest, only "try" updating their position.
-				UpdateMarker("Head", values, 3, 4, 5);
-				UpdateMarker("View", values, 6, 7, 8);
-				TryUpdateMarker("HitRight", values, 9, 10, 11);
-				TryUpdateMarker("HitLeft", values, 12, 13, 14);
-				TryUpdateMarker("Focus", values, 15, 16, 17);
-				// Transfer eye openness to the y-scale values of the rings.
-				if (values[18] != "NA")
+				try
 				{
-					transform.Find("Head").Find("RightEyeAnchor").localScale = new Vector3(1, float.Parse(values[18]), 1);
-				}
-				if (values[19] != "NA")
-				{
-					transform.Find("Head").Find("LeftEyeAnchor").localScale = new Vector3(1, float.Parse(values[19]), 1);
-				}
-				// Rotate the head according to the view point.
-				transform.Find("Head").LookAt(transform.Find("View"));
-				// Also play the correct clip when the clip ID changes.
-				int currentClip;
-				if (int.TryParse(values[1], out currentClip))
-				{
-					if (currentClip != previousClip)
+					// Head and view points are always there. (No NAs.)
+					// For the rest, only "try" updating their position.
+					UpdateMarker("Head", values, 3, 4, 5);
+					UpdateMarker("View", values, 9, 10, 11);
+					TryUpdateMarker("HitRight", values, 12, 13, 14);
+					TryUpdateMarker("HitLeft", values, 15, 16, 17);
+					TryUpdateMarker("Focus", values, 20, 21, 22);
+					// Transfer eye openness to the y-scale values of the rings.
+					if (values[23] != "NA")
 					{
-						StartCoroutine(main.phoneBooth.PlayClip(main.audioSamples[currentClip]));
-						previousClip = currentClip;
+						transform.Find("Head").Find("RightEyeAnchor").localScale = new Vector3(1, float.Parse(values[23]), 1);
 					}
+					if (values[24] != "NA")
+					{
+						transform.Find("Head").Find("LeftEyeAnchor").localScale = new Vector3(1, float.Parse(values[24]), 1);
+					}
+					// Rotate the head according to the view point.
+					transform.Find("Head").LookAt(transform.Find("View"), ParseVector3(values, 6, 7, 8));
+					// Also play the correct clip when the clip ID changes.
+					int currentClip;
+					if (int.TryParse(values[1], out currentClip))
+					{
+						if (currentClip != previousClip)
+						{
+							StartCoroutine(main.phoneBooth.PlayClip(main.audioSamples[currentClip]));
+							previousClip = currentClip;
+						}
+					}
+				}
+				catch (System.Exception e)
+				{
+					Debug.LogWarning("[Replay] Caught exception: " + e.Message);
 				}
 			}
 		}
