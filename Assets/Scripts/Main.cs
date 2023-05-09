@@ -181,6 +181,8 @@ public class Main : MonoBehaviour
 	public bool showGazeIndicator = false;
 	[Tooltip("Go through the introduction (setup) even in debug builds?")]
 	public bool debugSetup = false;
+	[Tooltip("Play full audio samples even in debug builds?")]
+	public bool debugAudio = false;
 	public bool randomizeClips = true;
 	public float winkSeconds = 2.0f;
 
@@ -370,6 +372,7 @@ public class Main : MonoBehaviour
 		{
 			yield return new WaitForSeconds(2);
 			UpdateStatusFields();
+			phoneBooth.debugAudio = this.debugAudio;
 			yield return phoneBooth.PlayClip(audioSamples[CurrentClip]);
 			// The clip successfully completed, reset the tries.
 			currentTry = 1;
@@ -394,6 +397,7 @@ public class Main : MonoBehaviour
 				Upload.Async(Logger.GetFilePath(), uploadURI);
 			}
 		}
+		phoneBooth.debugAudio = this.debugAudio;
 		yield return phoneBooth.PlayClip(userIDSound, false);
 		Application.Quit();
 	}
